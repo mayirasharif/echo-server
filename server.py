@@ -10,7 +10,7 @@ PORT = 8888
 server_socket.bind((HOST, PORT))
 
 # Listen for multiple clients.
-server_socket.listen(2)
+server_socket.listen()
 
 # Our client function
 def talk_to_client(client, addr):
