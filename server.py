@@ -9,13 +9,13 @@ HOST = '127.0.0.1'
 PORT = 8888
 server_socket.bind((HOST, PORT))
 
-# Listen for a max 2 connections / clients.
+# Listen for multiple clients.
 server_socket.listen(2)
 
 # Our client function
 def talk_to_client(client, addr):
     while True:
-        # Print client message.
+        # Echo message
         echo = client.recv(1024).decode()
 
         # Break if client disconnects (empty response)
@@ -37,10 +37,3 @@ while True:
     t = threading.Thread(target=talk_to_client, args=(client, addr))
     t.start()
     
-
-
-
-
-
-
-# How to implement continuous connection accepts, new threa dfor each client, ensuring this simultaneous without crashin or data integrity
