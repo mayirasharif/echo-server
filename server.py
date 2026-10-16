@@ -22,6 +22,9 @@ def talk_to_client(client, addr):
         if echo == '':
             break
 
+        # Print message
+        print(f"{addr} says: {echo}")
+        
         # Send message to client.
         client.send(echo.encode())
     client.close()
