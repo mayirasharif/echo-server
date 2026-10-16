@@ -1,4 +1,5 @@
 import socket
+import threading
 
 # Create the Socket.
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -11,12 +12,32 @@ server_socket.bind((HOST, PORT))
 # Listen for a max 2 connections / clients.
 server_socket.listen(2)
 
+# Our client function
+def talk_to_client(client, addr):
+    while True:
+        # Print client message.
+        echo = client.recv(1024).decode()
+
+        # Break if client disconnects (empty response)
+        if echo == '':
+            break
+
+        # Send message to client.
+        client.send(echo.encode())
+    client.close()
+
 # Continuous While Loop for continuous listening.
 while True:
 
     # Accept client connection.
     client, addr = server_socket.accept()
-    # Print client message.
-    print(client.recv(1024).decode())
-    # Send message to client.
-    client.send("Hello there! This is the server.".encode())
+    t = threading.Thread(target=talk_to_client, args=(client, addr))
+    t.start()
+    
+
+
+
+
+
+
+# How to implement continuous connection accepts, new threa dfor each client, ensuring this simultaneous without crashin or data integrity
