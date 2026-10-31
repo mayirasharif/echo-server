@@ -80,10 +80,7 @@ procedures = {
 
 # Parameter Marshaling / Unmarshaling
 def marshal(procedure, a, b):
-
-    result = ",".join([procedure, str(a), str(b)])
-    return result
-    
+    return f"{procedure},{a},{b}\n"
 
 # Unmarshal an incoming request from a client.
 def unmarshal(msg):
@@ -98,7 +95,7 @@ def unmarshal(msg):
     except ValueError:
         raise ValueError("Parameters are of incorrect type")
 
-    if msg[0] not in ["ADD", "SUBTRACT", "MULTIPLY", "MAX", "SUB"]:
+    if msg[0] not in procedures:
         raise ValueError("Procedure is not supported")
     return msg[0], a, b
 
@@ -107,6 +104,6 @@ while True:
 
     # Accept client connection.
     client, addr = server_socket.accept()
-    t = threading.Thread(target=echo_to_client, args=(client, addr))
+    t = threading.Thread(target=rpc_to_client, args=(client, addr))
     t.start()
     
