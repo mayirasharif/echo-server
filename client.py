@@ -5,6 +5,13 @@ client.connect(('127.0.0.1', 8888))
 
 response = input("Type in what you want to send: ")
 
+# Parameter Marshaling / Unmarshaling
+def marshal(msg):
+    pass
+
+def unmarshal(msg):
+    pass
+
 # User input loop
 while response != "quit" and response != "":
     client.send(response.encode())
