@@ -13,3 +13,10 @@ The response format that the server will use when sending back to the client wil
 
 ## Non-integer parameters
 We can only use integers for the parameters in this project. If a string or non-integer is used, we will raise an exception.
+
+
+
+# Marshaling / Unmarshaling explanation
+Here, I used a text-based marshaling approach in order to avoid the issues that come with trying to get both clients and servers to adopt a similar byte-based format approach. Using text was a simpler move in this case. Both server and client agree on the format "Procedure,a,b" for requests, and "STATUS,VALUE" for server responses. For client requests to the server, this string text has to be split by the commas and have "a" and "b" turn into integers.
+
+For more information, each message between server and client ends on a newline-and this is how the reciever knows to stop reading through TCP.
