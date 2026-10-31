@@ -1,6 +1,5 @@
 import socket
 import threading
-from collections import namedtuple
 
 # Create the Socket.
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

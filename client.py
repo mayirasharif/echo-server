@@ -20,7 +20,7 @@ def unmarshal(msg):
 
 while True:
 
-    procedure = input("Enter operation (Press enter to quit):")
+    procedure = input("Enter operation (Press enter to quit):").upper()
     if procedure == "":
         break
     a = input("Enter first integer (Press enter to quit):")
@@ -31,7 +31,7 @@ while True:
         break
     response = f"{procedure},{a},{b}"
 
-
+    
     client.sendall(marshal(response).encode("utf-8"))
     server_letter = reader.readline()
 
@@ -39,9 +39,13 @@ while True:
         print("Server disconnect")
         break
 
-    status, value = unmarshal(server_letter)
+    try:
+        status, value = unmarshal(server_letter)
+    except ValueError:
+        print("Client failure")
+        continue
     if status == "COMPLETE":
-        print(f"Result: {value}")
+        print(f"Result from server: {value}")
     else:
         print(f"Server error: {value}")
     
