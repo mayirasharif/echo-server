@@ -13,8 +13,8 @@ server_socket.bind((HOST, PORT))
 # Listen for multiple clients.
 server_socket.listen()
 
-# Our client function
-def talk_to_client(client, addr):
+# Our echo client function
+def echo_to_client(client, addr):
     while True:
         # Echo message
         echo = client.recv(1024).decode()
@@ -29,6 +29,34 @@ def talk_to_client(client, addr):
         # Send message to client.
         client.send(echo.encode())
     client.close()
+
+# Our RPC logic
+def rpc_to_client(client, addr):
+    buffer = b''
+    while True:
+        data = client.recv(1024)
+        if not data:
+            break
+        buffer += data
+
+        while b'\n' in buffer:
+            raw, buffer = buffer.split(b'\n', 1)
+            line = raw.decode().strip()
+
+            procedure, a, b = unmarshal(line)
+            if procedure in procedures:
+                result = procedures[procedure](a, b)
+            
+
+
+# Function dictionary
+
+procedures = {
+    'ADD': ADD, 
+    'SUBTRACT': SUBTRACT,
+    'MULTIPLY': MULTIPLY,
+    'MAX': MAX
+}
 
 # Our four functions
 def ADD(a, b):
@@ -72,6 +100,6 @@ while True:
 
     # Accept client connection.
     client, addr = server_socket.accept()
-    t = threading.Thread(target=talk_to_client, args=(client, addr))
+    t = threading.Thread(target=echo_to_client, args=(client, addr))
     t.start()
     
