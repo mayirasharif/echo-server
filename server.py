@@ -33,30 +33,28 @@ def echo_to_client(client, addr):
 # Our RPC logic
 def rpc_to_client(client, addr):
     buffer = b''
-    while True:
-        data = client.recv(1024)
-        if not data:
-            break
-        buffer += data
+    try:
+        while True:
+            data = client.recv(1024)
+            if not data:
+                break
+            buffer += data
 
-        while b'\n' in buffer:
-            raw, buffer = buffer.split(b'\n', 1)
-            line = raw.decode().strip()
-
-            procedure, a, b = unmarshal(line)
-            if procedure in procedures:
-                result = procedures[procedure](a, b)
+            while b'\n' in buffer:
+                raw, buffer = buffer.split(b'\n', 1)
+                try:
+                    procedure, a, b = unmarshal(raw.decode("utf-8"))
+                    result = procedures[procedure](a, b)
+                    response = f"COMPLETE,{result}\n"
+                except (ValueError, UnicodeDecodeError) as exc:
+                    response = f"ERR,{exc}\n"
+                client.sendall(response.encode("utf-8"))
+    finally:
+        client.close()
             
 
 
-# Function dictionary
 
-procedures = {
-    'ADD': ADD, 
-    'SUBTRACT': SUBTRACT,
-    'MULTIPLY': MULTIPLY,
-    'MAX': MAX
-}
 
 # Our four functions
 def ADD(a, b):
@@ -70,6 +68,15 @@ def MULTIPLY(a, b):
 
 def MAX(a, b):
     return max(a, b)
+
+# Function dictionary
+
+procedures = {
+    'ADD': ADD, 
+    'SUBTRACT': SUBTRACT,
+    'MULTIPLY': MULTIPLY,
+    'MAX': MAX
+}
 
 # Parameter Marshaling / Unmarshaling
 def marshal(procedure, a, b):
